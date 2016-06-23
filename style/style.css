@@ -1,0 +1,11 @@
+#header {
+  margin-bottom: 20px;
+}
+
+.notification-badge {
+  margin-top: 15px;
+}
+.notification-badge .badge {
+  background: #ca6464;
+  color: #fff;
+}
