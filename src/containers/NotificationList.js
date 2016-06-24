@@ -1,29 +1,30 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
-import firebase from 'firebase';
+import Pusher from 'pusher-js';
 
-import { fetchNotifications, updateNotifications } from '../actions/index';
 import NotificationItem from '../components/NotificationItem';
+import { fetchNotifications, updateNotifications } from '../actions/index';
 
 
 class NotificationList extends Component {
   constructor(props) {
     super(props);
-    this.firebaseRef = firebase.database().ref(`notifications/${this.props.userId}`);
+    this.pusher = new Pusher("639ac335613b3e9af534");
+    this.channel = this.pusher.subscribe(`user-${this.props.userId}`);
   }
 
   componentWillMount() {
-    this.firebaseRef.on('child_added', (snapshot) => {
-      this.props.fetchNotifications(snapshot.val());
+    this.channel.bind('notification', (data) => {
+      this.props.fetchNotifications(data);
     });
   }
 
-  componentDidMount() {
-    this.firebaseRef.on('child_changed', (snapshot) => {
-      this.props.updateNotifications(snapshot.val());
-    });
-  }
+  // componentDidMount() {
+  //   this.firebaseRef.on('child_changed', (snapshot) => {
+  //     this.props.updateNotifications(snapshot.val());
+  //   });
+  // }
 
   render() {
     let notifications = this.props.notifications.map((item) => {
